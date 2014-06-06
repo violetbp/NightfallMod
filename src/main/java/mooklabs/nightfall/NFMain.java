@@ -1,6 +1,10 @@
 package mooklabs.nightfall;
 
+import java.util.ArrayList;
+
 import mooklabs.nightfall.blocks.BlockNFChest;
+import mooklabs.nightfall.config.LootItem;
+import mooklabs.nightfall.config.Parse;
 import mooklabs.nightfall.proxy.CommonProxy;
 import mooklabs.nightfall.proxy.ProjectZEventHandler;
 import net.minecraft.block.Block;
@@ -26,11 +30,11 @@ import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.common.registry.LanguageRegistry;
 import cpw.mods.fml.relauncher.Side;
 
-@Mod(modid = NFMain.modid, name = NFMain.name, version = "Alpha 0.0.00001")
+@Mod(modid = NFMain.modid, name = NFMain.name, version = "Alpha 0.0.00001", dependencies = "required-after:weaponmod")
 public class NFMain{
 
 	public static final String modid = "nightfall";
-	public static final String VERSION = "0.0.02";
+	public static final String VERSION = "0.0.04";
 	public static final String name = "Project: Nightfall";
 
 	public static final Logger logger = LogManager.getLogger(NFMain.name);
@@ -44,15 +48,22 @@ public class NFMain{
 	public static CommonProxy proxy;
 
 	Block chest = new BlockNFChest();
-
+	/**
+	 * holds the list of items added by the config
+	 */
+	ArrayList<Item> itemList= new ArrayList();
 	@EventHandler
 	public void preInit(FMLPreInitializationEvent event) {
 		proxy.registerRenderers();
 		MinecraftForge.EVENT_BUS.register(new ProjectZEventHandler());
-		// register block name this is like the most important thing
-		// names blocks and items AND INITITALIZEZ them
+
+		itemList.addAll(Parse.readFromConfig());
+
+
 		achievements();
 		itemBlockNameReg();
+
+
 	}
 
 	@EventHandler
@@ -73,10 +84,20 @@ public class NFMain{
 		//LanguageRegistry.instance().addStringLocalization("entity.ZZombie.name", "ZZombie");
 	}
 
-	// {{ block registation///////////////
 	private void itemBlockNameReg() {
 		registerBlock(chest, "Chest*");
-	}//}}
+
+		logger.info("Registering Unique Items:");
+		for(Item i:itemList){
+			if(i instanceof LootItem)
+				registerItem(i, ((LootItem)i).name);
+			else registerItem(i, i.getUnlocalizedName());
+
+			logger.info(i.getUnlocalizedName());
+		}
+
+
+	}
 
 	// {{ Achievements/////////////////
 	public static Achievement getDrink;

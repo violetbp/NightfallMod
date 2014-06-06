@@ -41,6 +41,7 @@ public class ExtLootItem extends Item{
 		ItemStack i = new ItemStack(this.specialItem, 1, 0);
 		i.setItemDamage(dura);
 		i.setStackDisplayName(name);
+
 		list.add(i);
 
 	}

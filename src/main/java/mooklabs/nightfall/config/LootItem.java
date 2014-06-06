@@ -41,7 +41,7 @@ public class LootItem extends ItemSword{
 	public void getSubItems(Item item, CreativeTabs tab, List list)
 	{
 		ItemStack i = new ItemStack(item, 1, 0);
-		i.setItemDamage(dura);
+		i.setItemDamage(this.dura);
 		list.add(i);
 
 	}
@@ -52,7 +52,7 @@ public class LootItem extends ItemSword{
 	@Override
 	@SideOnly(Side.CLIENT)
 	public void addInformation(ItemStack par1ItemStack, EntityPlayer par2EntityPlayer, List par3List, boolean par4) {
-		par3List.add(lore);
+		par3List.add(this.lore);
 
 	}
 

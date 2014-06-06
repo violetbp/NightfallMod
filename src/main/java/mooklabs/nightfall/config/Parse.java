@@ -17,10 +17,11 @@ public class Parse {
 
 	public static void createItemFile() {
 		try {
-			BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream("items.txt"), "utf-8"));
+			BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream("config/items.txt"), "utf-8"));
 			writer.write("Name=Shell Sword\nLore=Sharpish\nDamage=5\nTexture=shellSword\nMaxDura=10\n--");
 			writer.close();
 		} catch (IOException e) {
+			e.printStackTrace();
 		}
 	}
 
@@ -32,7 +33,7 @@ public class Parse {
 		ArrayList<Item> items = new ArrayList();
 		try {
 
-			Scanner scanner = new Scanner(new File("items.txt"), "utf-8");
+			Scanner scanner = new Scanner(new File("config/items.txt"), "utf-8");
 			ArrayList<String> array = new ArrayList();
 			while (scanner.hasNextLine()) {
 

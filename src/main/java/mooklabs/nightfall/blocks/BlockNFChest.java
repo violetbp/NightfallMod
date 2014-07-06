@@ -20,6 +20,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.InventoryLargeChest;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
@@ -42,6 +43,39 @@ public class BlockNFChest extends BlockContainer implements IWailaBlock {
 		this.setHardness(2.5f);
 		this.setCreativeTab(CreativeTabs.tabDecorations);
 		this.setBlockBounds(0.0625F, 0.0F, 0.0625F, 0.9375F, 0.875F, 0.9375F);
+
+
+	}
+
+
+	/**
+	 * returns a list of items with the same ID, but different meta (eg: dye returns 16 items)
+	 */
+	@Override
+	@SideOnly(Side.CLIENT)
+	public void getSubBlocks(Item item, CreativeTabs tab, List list)
+	{
+		Block it = this;
+		ItemStack i = new ItemStack(this, 1, 0);
+		list.add(i);
+		for(int f=0; f<10; f++){
+			it.setBlockName("unlocname" + f);
+			i = new ItemStack(it, 1, 0);
+			//i.setStackDisplayName("name" + f);
+
+
+			list.add(i);
+
+		}
+
+		/*
+		this.specialItem.setUnlocalizedName(name);
+		this.specialItem.setHasSubtypes(true);
+		this.specialItem.setCreativeTab(CreativeTabs.tabMaterials);
+		ItemStack it = new ItemStack(this.specialItem, 1, 0);
+		it.setItemDamage(dura);
+		it.setStackDisplayName(name);
+		list.add(it);*/
 	}
 
 	/**

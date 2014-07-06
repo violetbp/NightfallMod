@@ -24,9 +24,8 @@ public class ExtLootItem extends Item{
 		this.dura = dura;
 
 		this.specialItem = item;
-		specialItem.setUnlocalizedName(name);
-		specialItem.setHasSubtypes(true);
-		specialItem.setCreativeTab(CreativeTabs.tabMaterials);
+		this.specialItem.setHasSubtypes(true);
+
 
 	}
 
@@ -39,11 +38,19 @@ public class ExtLootItem extends Item{
 	public void getSubItems(Item item, CreativeTabs tab, List list)
 	{
 		ItemStack i = new ItemStack(this.specialItem, 1, 0);
+		list.add(i);
 		i.setItemDamage(dura);
 		i.setStackDisplayName(name);
 
 		list.add(i);
 
+		this.specialItem.setUnlocalizedName(name);
+		this.specialItem.setHasSubtypes(true);
+		this.specialItem.setCreativeTab(CreativeTabs.tabMaterials);
+		ItemStack it = new ItemStack(this.specialItem, 1, 0);
+		it.setItemDamage(dura);
+		it.setStackDisplayName(name);
+		list.add(it);
 	}
 
 	/**

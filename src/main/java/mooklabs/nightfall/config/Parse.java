@@ -66,17 +66,20 @@ public class Parse {
 			scanner.close();
 		} catch (FileNotFoundException e) {
 			createItemFile();
+			NFMain.instance.logger.fatal("New file created at " + new File("config/items.txt").getAbsolutePath());
+			NFMain.instance.logger.fatal("Using default config, you may want to change it");
+
 		} catch (IOException e) {
 			NFMain.instance.logger.fatal("File Read Error!");
 			NFMain.instance.logger.fatal(e.getMessage());
 			e.printStackTrace();
 
-			NFMain.instance.logger.fatal("This means special items wont show up!");
+			NFMain.instance.logger.fatal("This means special items won't show up!");
 			NFMain.instance.logger.fatal("Report as error immediatly!");
 			System.exit(0);
 		}
 
-		System.err.println(items.size());
+		NFMain.logger.info("Registed " + items.size() + " special items");
 		return items;
 
 	}

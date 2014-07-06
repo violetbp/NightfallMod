@@ -12,14 +12,12 @@ import net.minecraft.inventory.ContainerChest;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.InventoryLargeChest;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
-import net.minecraft.tileentity.TileEntity;
+import net.minecraft.tileentity.TileEntityChest;
 import net.minecraft.util.AxisAlignedBB;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
-public class TileEntityNFChest extends TileEntity implements IInventory
+public class TileEntityNFChest extends TileEntityChest implements IInventory
 {
 	private ItemStack[] chestContents = new ItemStack[36];
 	/** Determines if the check for adjacent chests has taken place. */
@@ -53,6 +51,7 @@ public class TileEntityNFChest extends TileEntity implements IInventory
 	public TileEntityNFChest()
 	{
 		this.cachedChestType = -1;
+
 	}
 
 	@SideOnly(Side.CLIENT)
@@ -116,40 +115,6 @@ public class TileEntityNFChest extends TileEntity implements IInventory
 		}
 	}
 
-	/**
-	 * When some containers are closed they call this on each slot, then drop whatever it returns as an EntityItem -
-	 * like when you close a workbench GUI.
-	 */
-	@Override
-	public ItemStack getStackInSlotOnClosing(int par1)
-	{
-		if (this.chestContents[par1] != null)
-		{
-			ItemStack itemstack = this.chestContents[par1];
-			this.chestContents[par1] = null;
-			return itemstack;
-		}
-		else
-		{
-			return null;
-		}
-	}
-
-	/**
-	 * Sets the given item stack to the specified slot in the inventory (can be crafting or armor sections).
-	 */
-	@Override
-	public void setInventorySlotContents(int par1, ItemStack par2ItemStack)
-	{
-		this.chestContents[par1] = par2ItemStack;
-
-		if (par2ItemStack != null && par2ItemStack.stackSize > this.getInventoryStackLimit())
-		{
-			par2ItemStack.stackSize = this.getInventoryStackLimit();
-		}
-
-		this.markDirty();
-	}
 
 	/**
 	 * Returns the name of the inventory
@@ -169,59 +134,12 @@ public class TileEntityNFChest extends TileEntity implements IInventory
 		return this.customName != null && this.customName.length() > 0;
 	}
 
+	@Override
 	public void func_145976_a(String p_145976_1_)
 	{
 		this.customName = p_145976_1_;
 	}
 
-	@Override
-	public void readFromNBT(NBTTagCompound compound)
-	{
-		super.readFromNBT(compound);
-		NBTTagList nbttaglist = compound.getTagList("Items", 10);
-		this.chestContents = new ItemStack[this.getSizeInventory()];
-
-		if (compound.hasKey("CustomName", 8))
-		{
-			this.customName = compound.getString("CustomName");
-		}
-
-		for (int i = 0; i < nbttaglist.tagCount(); ++i)
-		{
-			NBTTagCompound nbttagcompound1 = nbttaglist.getCompoundTagAt(i);
-			int j = nbttagcompound1.getByte("Slot") & 255;
-
-			if (j >= 0 && j < this.chestContents.length)
-			{
-				this.chestContents[j] = ItemStack.loadItemStackFromNBT(nbttagcompound1);
-			}
-		}
-	}
-
-	@Override
-	public void writeToNBT(NBTTagCompound compound)
-	{
-		super.writeToNBT(compound);
-		NBTTagList nbttaglist = new NBTTagList();
-
-		for (int i = 0; i < this.chestContents.length; ++i)
-		{
-			if (this.chestContents[i] != null)
-			{
-				NBTTagCompound nbttagcompound1 = new NBTTagCompound();
-				nbttagcompound1.setByte("Slot", (byte)i);
-				this.chestContents[i].writeToNBT(nbttagcompound1);
-				nbttaglist.appendTag(nbttagcompound1);
-			}
-		}
-
-		compound.setTag("Items", nbttaglist);
-
-		if (this.hasCustomInventoryName())
-		{
-			compound.setString("CustomName", this.customName);
-		}
-	}
 
 	/**
 	 * Returns the maximum stack size for a inventory slot.
@@ -241,111 +159,6 @@ public class TileEntityNFChest extends TileEntity implements IInventory
 		return this.worldObj.getTileEntity(this.xCoord, this.yCoord, this.zCoord) != this ? false : par1EntityPlayer.getDistanceSq(this.xCoord + 0.5D, this.yCoord + 0.5D, this.zCoord + 0.5D) <= 64.0D;
 	}
 
-	/**
-	 * Causes the TileEntity to reset all it's cached values for it's container Block, metadata and in the case of
-	 * chests, the adjacent chest check
-	 */
-	@Override
-	public void updateContainingBlockInfo()
-	{
-		super.updateContainingBlockInfo();
-		this.adjacentChestChecked = false;
-	}
-
-	private void func_145978_a(TileEntityNFChest p_145978_1_, int p_145978_2_)
-	{
-		if (p_145978_1_.isInvalid())
-		{
-			this.adjacentChestChecked = false;
-		}
-		else if (this.adjacentChestChecked)
-		{
-			switch (p_145978_2_)
-			{
-			case 0:
-				if (this.adjacentChestZPos != p_145978_1_)
-				{
-					this.adjacentChestChecked = false;
-				}
-
-				break;
-			case 1:
-				if (this.adjacentChestXNeg != p_145978_1_)
-				{
-					this.adjacentChestChecked = false;
-				}
-
-				break;
-			case 2:
-				if (this.adjacentChestZNeg != p_145978_1_)
-				{
-					this.adjacentChestChecked = false;
-				}
-
-				break;
-			case 3:
-				if (this.adjacentChestXPos != p_145978_1_)
-				{
-					this.adjacentChestChecked = false;
-				}
-			}
-		}
-	}
-
-	/**
-	 * Performs the check for adjacent chests to determine if this chest is double or not.
-	 */
-	public void checkForAdjacentChests()
-	{
-		if (!this.adjacentChestChecked)
-		{
-			this.adjacentChestChecked = true;
-			this.adjacentChestZNeg = null;
-			this.adjacentChestXPos = null;
-			this.adjacentChestXNeg = null;
-			this.adjacentChestZPos = null;
-
-			if (this.func_145977_a(this.xCoord - 1, this.yCoord, this.zCoord))
-			{
-				this.adjacentChestXNeg = (TileEntityNFChest)this.worldObj.getTileEntity(this.xCoord - 1, this.yCoord, this.zCoord);
-			}
-
-			if (this.func_145977_a(this.xCoord + 1, this.yCoord, this.zCoord))
-			{
-				this.adjacentChestXPos = (TileEntityNFChest)this.worldObj.getTileEntity(this.xCoord + 1, this.yCoord, this.zCoord);
-			}
-
-			if (this.func_145977_a(this.xCoord, this.yCoord, this.zCoord - 1))
-			{
-				this.adjacentChestZNeg = (TileEntityNFChest)this.worldObj.getTileEntity(this.xCoord, this.yCoord, this.zCoord - 1);
-			}
-
-			if (this.func_145977_a(this.xCoord, this.yCoord, this.zCoord + 1))
-			{
-				this.adjacentChestZPos = (TileEntityNFChest)this.worldObj.getTileEntity(this.xCoord, this.yCoord, this.zCoord + 1);
-			}
-
-			if (this.adjacentChestZNeg != null)
-			{
-				this.adjacentChestZNeg.func_145978_a(this, 0);
-			}
-
-			if (this.adjacentChestZPos != null)
-			{
-				this.adjacentChestZPos.func_145978_a(this, 2);
-			}
-
-			if (this.adjacentChestXPos != null)
-			{
-				this.adjacentChestXPos.func_145978_a(this, 1);
-			}
-
-			if (this.adjacentChestXNeg != null)
-			{
-				this.adjacentChestXNeg.func_145978_a(this, 3);
-			}
-		}
-	}
 
 	private boolean func_145977_a(int p_145977_1_, int p_145977_2_, int p_145977_3_)
 	{
@@ -500,38 +313,4 @@ public class TileEntityNFChest extends TileEntity implements IInventory
 		}
 	}
 
-	/**
-	 * Returns true if automation is allowed to insert the given stack (ignoring stack size) into the given slot.
-	 */
-	@Override
-	public boolean isItemValidForSlot(int par1, ItemStack par2ItemStack)
-	{
-		return true;
-	}
-
-	/**
-	 * invalidates a tile entity
-	 */
-	@Override
-	public void invalidate()
-	{
-		super.invalidate();
-		this.updateContainingBlockInfo();
-		this.checkForAdjacentChests();
-	}
-
-	public int func_145980_j()
-	{
-		if (this.cachedChestType == -1)
-		{
-			if (this.worldObj == null || !(this.getBlockType() instanceof BlockChest))
-			{
-				return 0;
-			}
-
-			this.cachedChestType = ((BlockChest)this.getBlockType()).field_149956_a;
-		}
-
-		return this.cachedChestType;
-	}
 }

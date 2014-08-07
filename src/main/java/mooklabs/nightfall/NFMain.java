@@ -115,7 +115,7 @@ public class NFMain {
 			i = new ItemStack(ite, 1, num++);
 			i.setStackDisplayName(s);
 			GameRegistry.registerCustomItemStack(s, i);
-			System.out.println(i);
+			System.out.println(s);
 			//list.add(i);
 		}
 	}

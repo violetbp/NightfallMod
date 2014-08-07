@@ -7,6 +7,7 @@ import net.minecraft.entity.monster.EntityZombie;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.util.DamageSource;
+import net.minecraft.world.biome.BiomeGenBase.SpawnListEntry;
 import net.minecraftforge.event.entity.EntityEvent.EntityConstructing;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
@@ -36,7 +37,7 @@ public class ProjectZEventHandler {
 			MLib.printDebugToPlayer("+sanity for attacking zombie");
 		}
 
-		//FOR STATS PROBLY WONT USE
+		// FOR STATS PROBLY WONT USE
 		if (event.entityPlayer.worldObj.isRemote) {
 			// give more if kill player?
 			// props.playerStats.addLevel(EnumPlayerStat.Strength, event.target instanceof EntityPlayer ? 2 : 1);
@@ -47,12 +48,11 @@ public class ProjectZEventHandler {
 	// for entityattacks
 	@SubscribeEvent
 	public void entityattack(LivingAttackEvent event) {
-		if (event.source.getEntity() instanceof EntityZombie)
-			if (event.entityLiving instanceof EntityPlayer) {
-				ExtendedPlayer props = ExtendedPlayer.get((EntityPlayer) event.entityLiving);
-				// props.setBleeding(true);
-				// props.visibility++;
-			}
+		if (event.source.getEntity() instanceof EntityZombie) if (event.entityLiving instanceof EntityPlayer) {
+			ExtendedPlayer props = ExtendedPlayer.get((EntityPlayer) event.entityLiving);
+			// props.setBleeding(true);
+			// props.visibility++;
+		}
 	}
 
 	public static DamageSource bleeding = new DamageSource("bleeding").setDamageBypassesArmor();
@@ -102,26 +102,39 @@ public class ProjectZEventHandler {
 	public void entityfall(LivingFallEvent event) {
 
 		if (event.entityLiving instanceof EntityPlayer) {// make sure its a player
+			//this.alterVisibility((EntityPlayer)event.entityLiving, .4);
+
 			ExtendedPlayer props = ExtendedPlayer.get((EntityPlayer) event.entityLiving);
-			//props.changeMana(-4);
-			//System.out.println(props.getInsanity()+"++4"+((EntityPlayer) event.entityLiving).getCommandSenderName()+" is the name");
+			// props.changeMana(-4);
+			// System.out.println(props.getInsanity()+"++4"+((EntityPlayer) event.entityLiving).getCommandSenderName()+" is the name");
 		}
 	}
 
 	@SubscribeEvent
 	public void onEntityConstructing(EntityConstructing event) {
 		/*Be sure to check if the entity being constructed is the correct type for the extended properties you're about to add! The null check may not be necessary - I only use it to make sure properties are only registered once per entity */
-		if (event.entity instanceof EntityPlayer && ExtendedPlayer.get((EntityPlayer) event.entity) == null){
-			//NFMain.logger.info("current " + ExtendedPlayer.get((EntityPlayer) event.entity).currentInsanity);
+		if (event.entity instanceof EntityPlayer && ExtendedPlayer.get((EntityPlayer) event.entity) == null) {
+			// NFMain.logger.info("current " + ExtendedPlayer.get((EntityPlayer) event.entity).currentInsanity);
 			ExtendedPlayer.register((EntityPlayer) event.entity);
 			NFMain.logger.info("Creating new playerExt for ");// + event.entity.getCommandSenderName());
 		}
 
 	}
 
+	/**
+	 * ensure no other mobs spawn
+	 * 
+	 * @param event
+	 */
 	@SubscribeEvent
 	public void PotentialSpawns(WorldEvent.PotentialSpawns e) {
-		if (e.type.equals(EnumCreatureType.monster)) if (e.list.get(0).entityClass != EntityZombie.class) e.setCanceled(true);
+		if (e.type.equals(EnumCreatureType.monster)) {
+			for (SpawnListEntry s : e.list)
+				if (s.entityClass != EntityZombie.class) {
+					e.setCanceled(true);
+					break;
+				}
+		}
 	}
 
 	// we already have this event, but we need to modify it some
@@ -146,11 +159,33 @@ public class ProjectZEventHandler {
 
 	}
 
-
 	public void onPlayerOpenInventory(PlayerInteractEvent event) {
-		if(event.action.equals(Action.RIGHT_CLICK_BLOCK) && IInventory.class.isInstance(event.entityPlayer.worldObj.getBlock(event.x, event.y, event.z))){
-			((IInventory)(event.entityPlayer.worldObj.getTileEntity(event.x, event.y, event.z))).getInventoryName();
+		if (event.action.equals(Action.RIGHT_CLICK_BLOCK) && IInventory.class.isInstance(event.entityPlayer.worldObj.getBlock(event.x, event.y, event.z))) {
+			((IInventory) (event.entityPlayer.worldObj.getTileEntity(event.x, event.y, event.z))).getInventoryName();
 
 		}
 	}
+
+	public void alterVisibility(EntityPlayer player, double change) {
+		alterVisibility(player, change, 4, 1000);
+	}
+
+	public void alterVisibility(final EntityPlayer player, final double change, final int delay, final int delayStep) {
+		player.experience+=change;//add exp(vis)
+		new Thread(new Runnable() {
+			double dec = delay;
+			double rte = change / delay;
+			@Override
+			public void run() {
+				while (dec > 0) {
+					dec--;
+					try {Thread.sleep(delayStep);
+					} catch (InterruptedException e) {e.printStackTrace();}
+					player.experience-=rte;//slowly reduce it
+
+				}
+			}
+		}).start();
+	}
+
 }

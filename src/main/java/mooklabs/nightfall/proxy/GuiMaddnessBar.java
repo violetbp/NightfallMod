@@ -1,5 +1,7 @@
 package mooklabs.nightfall.proxy;
 
+import java.text.DecimalFormat;
+
 import mooklabs.nightfall.NFMain;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
@@ -36,15 +38,18 @@ public class GuiMaddnessBar extends Gui {
 	//
 	@SubscribeEvent(priority = EventPriority.NORMAL)
 	public void onRenderExperienceBar(RenderGameOverlayEvent event) {
+		//if(event.type == ElementType.EXPERIENCE)event.setCanceled(true);
 
 		// We draw after the ExperienceBar has drawn. The event raised by GuiIngameForge.pre() will return true from isCancelable. If you call event.setCanceled(true) in that
 		// case, the portion of rendering which this event represents will be canceled. We want to draw *after* the experience bar is drawn, so we make sure isCancelable()
 		// returns false and that the eventType represents the ExperienceBar event.
-		if (event.isCancelable() || event.type != ElementType.EXPERIENCE) {
+		if (event.type != ElementType.EXPERIENCE)
 			return;
-		}
+		if(event.isCancelable())return;
+		//event.setCanceled(true);//doesent acctually render exp
+
 		int windowHeight = event.resolution.getScaledHeight();
-		int windowWidth = event.resolution.getScaledWidth();
+		int windowWidth  = event.resolution.getScaledWidth();
 
 		/** Start of my tutorial */
 
@@ -54,8 +59,7 @@ public class GuiMaddnessBar extends Gui {
 		ExtendedPlayer props = ExtendedPlayer.get(player);
 
 		// Starting position for the mana bar - 2 pixels from the top left corner.
-		int xPos = 2;
-		int yPos = 2;
+		int xPos = 2, yPos = 2;
 
 		// The center of the screen can be gotten like this during this event:
 		// int xPos = event.resolution.getScaledWidth() / 2;int yPos = event.resolution.getScaledHeight() / 2;
@@ -79,8 +83,18 @@ public class GuiMaddnessBar extends Gui {
 		 * position at which to render. u and v are the bcoordinates of the most upper-left pixel in your texture file from which to start drawing. width and height are how
 		 * many pixels to render from the start point (u, v) */
 		// First draw the background layer. In my texture file, it starts at the upper-
-		// left corner (x=0, y=0), ends at 50 pixels (so it's 51 pixels long) and is 3 pixels thick (y value)
+		// left corner (x=0, y=0), ends at 50 pixels (so it's 51 pixels long) and is 3 pixels thick (y value)<---irrelivant now
 		this.drawTexturedModalRect(xPos, windowHeight-7, 0, 3, 42, 5);
+
+		int barheight = 50;
+		this.drawTexturedModalRect(windowWidth/2-50, windowHeight-barheight, 0, 3, 42, 5);
+		this.drawTexturedModalRect(windowWidth/2+8, windowHeight-barheight, 0, 3, 42, 5);
+		barheight--;
+		int aa = player.experienceLevel*2;if(aa>40)aa=40;
+		int bb = (int)(player.experience/player.xpBarCap()*40);if(bb>40)bb=40;
+		this.drawTexturedModalRect(windowWidth/2+1-50, windowHeight-barheight, 0, 0, aa, 3);
+		this.drawTexturedModalRect(windowWidth/2+1+8, windowHeight-barheight, 0, 0, bb, 3);
+
 
 		// Then draw the foreground; it's located just below the background in my
 		// texture file, so it starts at x=0, y=4, is only 2 pixels thick and 49 length
@@ -99,6 +113,11 @@ public class GuiMaddnessBar extends Gui {
 		if(bar>40)bar=0;
 		//renders text to tell what stuff is, must be done last for some reason, if not last fuc*s everything gui-related up
 		mc.fontRenderer.drawString("Insanity [example]"+insanity, 2, windowHeight-17, 1,false);
+
+		DecimalFormat df = new DecimalFormat("#.##");
+
+		mc.fontRenderer.drawString("Thirst: "+player.experienceLevel, 		windowWidth/2-50, windowHeight-60, 1, false);
+		mc.fontRenderer.drawString("Vis: "+df.format(player.experience/player.xpBarCap()*40)+"BROKEN", 	windowWidth/2+10, windowHeight-60, 1, false);
 
 	}
 

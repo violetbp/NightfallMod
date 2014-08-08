@@ -6,6 +6,9 @@ import mooklabs.nightfall.bag.ItemBag;
 import mooklabs.nightfall.blocks.BlockNFLootChest;
 import mooklabs.nightfall.config.LootItem;
 import mooklabs.nightfall.config.Parse;
+import mooklabs.nightfall.items.CreativeAmulet;
+import mooklabs.nightfall.items.FlyBelt;
+import mooklabs.nightfall.items.HealthRing;
 import mooklabs.nightfall.proxy.CommonProxy;
 import net.minecraft.block.Block;
 import net.minecraft.init.Items;
@@ -30,7 +33,7 @@ import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.common.registry.LanguageRegistry;
 import cpw.mods.fml.relauncher.Side;
 
-@Mod(modid = NFMain.modid, name = NFMain.name, version = NFMain.VERSION, dependencies = "required-after:weaponmod;required-after:BiblioCraft")
+@Mod(modid = NFMain.modid, name = NFMain.name, version = NFMain.VERSION, dependencies = "")//required-after:weaponmod;required-after:BiblioCraft
 public class NFMain {
 
 	public static final String modid = "nightfall";
@@ -49,10 +52,13 @@ public class NFMain {
 	public static CommonProxy proxy;
 
 	//Block chest = new BlockNFChest();
-	Block lootChest = new BlockNFLootChest();
+	public static Block lootChest = new BlockNFLootChest();
+	public static Item healthRing = new HealthRing();
+	public static Item flyBelt = new FlyBelt();
+	public static Item creativeAmulet = new CreativeAmulet();
 
 	/**holds the list of items added by the config*/
-	ArrayList<Item> itemList = new ArrayList();
+	public ArrayList<Item> itemList = new ArrayList();
 
 	/**may be very importaint later to decide who can do what*/
 	public static ArrayList<String> adminArray = new ArrayList();//will change to uuid sometime
@@ -87,8 +93,8 @@ public class NFMain {
 			MinecraftServer.getServer().setOnlineMode(false);
 
 			for (String player : adminArray) {
-				MinecraftServer.getServer().getConfigurationManager().addOp(player);
-				MinecraftServer.getServer().getConfigurationManager().addToWhiteList(player);
+				//UPD MinecraftServer.getServer().getConfigurationManager().addOp(player);
+				//MinecraftServer.getServer().getConfigurationManager().addToWhiteList(player);
 			}
 
 		}
@@ -107,17 +113,7 @@ public class NFMain {
 
 	@EventHandler
 	public void load(FMLPostInitializationEvent event) {
-		Item ite = GameRegistry.findItem("BiblioCraft", "SpruceShelf");
 
-		int num = 1;
-		ItemStack i;
-		for (String s : BlockNFLootChest.names) {
-			i = new ItemStack(ite, 1, num++);
-			i.setStackDisplayName(s);
-			GameRegistry.registerCustomItemStack(s, i);
-			System.out.println(s);
-			//list.add(i);
-		}
 	}
 
 	private void itemBlockNameReg() {
@@ -131,7 +127,11 @@ public class NFMain {
 			logger.info(i.getUnlocalizedName());
 		}
 		for(ItemBag b: bagArray)
-			registerItem(b, "bag");
+			registerItem(b, "Bag-UNSTABLE");
+		registerItem(healthRing, "Health Ring");
+		registerItem(flyBelt, "Fly Belt");
+		registerItem(creativeAmulet, "Creative Amulet");
+
 
 	}
 

@@ -53,8 +53,7 @@ public class GuiMaddnessBar extends Gui {
 		// We draw after the ExperienceBar has drawn. The event raised by GuiIngameForge.pre() will return true from isCancelable. If you call event.setCanceled(true) in that
 		// case, the portion of rendering which this event represents will be canceled. We want to draw *after* the experience bar is drawn, so we make sure isCancelable()
 		// returns false and that the eventType represents the ExperienceBar event.
-		if (event.type != ElementType.EXPERIENCE)
-			return;
+		//if (event.type != ElementType.EXPERIENCE)	return;
 		if(event.isCancelable())return;
 		//event.setCanceled(true);//doesent acctually render exp
 

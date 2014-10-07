@@ -9,6 +9,7 @@ import mooklabs.nightfall.config.Parse;
 import mooklabs.nightfall.items.CreativeAmulet;
 import mooklabs.nightfall.items.FlyBelt;
 import mooklabs.nightfall.items.HealthRing;
+import mooklabs.nightfall.items.NeedleGunItemRenderer;
 import mooklabs.nightfall.proxy.CommonProxy;
 import net.minecraft.block.Block;
 import net.minecraft.init.Items;
@@ -16,6 +17,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.stats.Achievement;
+import net.minecraftforge.client.MinecraftForgeClient;
 import net.minecraftforge.common.AchievementPage;
 
 import org.apache.logging.log4j.LogManager;
@@ -83,6 +85,7 @@ public class NFMain {
 
 		achievements();
 		itemBlockNameReg();
+		MinecraftForgeClient.registerItemRenderer(flyBelt, new NeedleGunItemRenderer());
 
 	}
 

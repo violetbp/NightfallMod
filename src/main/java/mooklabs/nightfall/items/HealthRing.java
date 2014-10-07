@@ -16,7 +16,7 @@ import baubles.api.IBauble;
 public class HealthRing extends Item implements IBauble {
 
 	private static final UUID healthBoostModifierUUID = UUID.fromString("1f0ab580-1f14-11e4-8c21-0800200c9a66");
-    private static final AttributeModifier healthBoostModifier = (new AttributeModifier(healthBoostModifierUUID, "Health boost", 1000, 2)).setSaved(false);
+    private static final AttributeModifier healthBoostModifier = (new AttributeModifier(healthBoostModifierUUID, "Health boost", 50, 2)).setSaved(true);
    
 	
 	public HealthRing() {
@@ -31,8 +31,8 @@ public class HealthRing extends Item implements IBauble {
 
 	@Override
 	public void onWornTick(ItemStack itemstack, EntityLivingBase player) {
-		if (player.getEntityAttribute(SharedMonsterAttributes.maxHealth).getModifier(healthBoostModifierUUID) == null)
-			player.getEntityAttribute(SharedMonsterAttributes.maxHealth).applyModifier(healthBoostModifier);
+		//if (player.getEntityAttribute(SharedMonsterAttributes.maxHealth).getModifier(healthBoostModifierUUID) == null)
+		//	player.getEntityAttribute(SharedMonsterAttributes.maxHealth).applyModifier(healthBoostModifier);
 	}
 
 	@Override
